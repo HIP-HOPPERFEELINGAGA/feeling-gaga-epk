@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --black:#080808;
+    --deep:#0f0f0f;
+    --card:#141414;
+    --gold:#d4a843;
+    --gold2:#f0c060;
+    --red:#c0392b;
+    --white:#f5f0e8;
+    --muted:#8a8070;
+    --border:#2a2520;
+  }
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Rajdhani',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:1000;
+    opacity:0.4;
+  }
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    padding:60px 24px;
+    text-align:center;
+    overflow:hidden;
+  }
+
+  .hero::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(212,168,67,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(192,57,43,0.06) 0%, transparent 60%);
+  }
+
+  .hero-tag{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    letter-spacing:4px;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:24px;
+    opacity:0;
+    animation:fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(72px, 16vw, 160px);
+    line-height:0.9;
+    letter-spacing:2px;
+    color:var(--white);
+    opacity:0;
+    animation:fadeUp 0.7s ease forwards 0.4s;
+    position:relative;
+  }
+
+  .hero-name span{
+    color:var(--gold);
+    display:block;
+  }
+
+  .hero-sub{
+    font-family:'Rajdhani',sans-serif;
+    font-size:clamp(14px,2.5vw,20px);
+    font-weight:500;
+    letter-spacing:6px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:16px;
+    opacity:0;
+    animation:fadeUp 0.7s ease forwards 0.6s;
+  }
+
+  .hero-divider{
+    width:80px;
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin:28px auto;
+    opacity:0;
+    animation:fadeUp 0.6s ease forwards 0.7s;
+  }
+
+  .hero-genres{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    opacity:0;
+    animation:fadeUp 0.7s ease forwards 0.8s;
+  }
+
+  .genre-pill{
+    border:1px solid var(--border);
+    background:rgba(212,168,67,0.07);
+    color:var(--gold2);
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    padding:6px 14px;
+    border-radius:2px;
+  }
+
+  /* SECTIONS */
+  .section{
+    max-width:900px;
+    margin:0 auto;
+    padding:80px 24px;
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .section.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .section-label{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    letter-spacing:5px;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:12px;
+  }
+
+  .section-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(36px,6vw,64px);
+    line-height:1;
+    color:var(--white);
+    margin-bottom:32px;
+  }
+
+  .section-divider{
+    width:100%;
+    height:1px;
+    background:var(--border);
+    margin:80px 0;
+  }
+
+  /* BIO */
+  .bio-text{
+    font-size:18px;
+    font-weight:400;
+    line-height:1.8;
+    color:rgba(245,240,232,0.75);
+    max-width:680px;
+  }
+
+  .bio-text strong{
+    color:var(--gold);
+    font-weight:700;
+  }
+
+  /* STATS ROW */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    margin-top:48px;
+  }
+
+  .stat{
+    background:var(--card);
+    padding:28px 24px;
+    text-align:center;
+  }
+
+  .stat-number{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:48px;
+    color:var(--gold);
+    display:block;
+    line-height:1;
+  }
+
+  .stat-label{
+    font-family:'Space Mono',monospace;
+    font-size:9px;
+    letter-spacing:3px;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-top:6px;
+    display:block;
+  }
+
+  /* GIGS */
+  .gig-list{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    border:1px solid var(--border);
+  }
+
+  .gig-item{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:20px 24px;
+    border-bottom:1px solid var(--border);
+    background:var(--card);
+    transition:background 0.2s;
+  }
+
+  .gig-item:last-child{border-bottom:none}
+
+  .gig-item:hover{background:#1a1a1a}
+
+  .gig-number{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:24px;
+    color:var(--border);
+    min-width:32px;
+  }
+
+  .gig-dot{
+    width:8px;
+    height:8px;
+    background:var(--gold);
+    border-radius:50%;
+    flex-shrink:0;
+  }
+
+  .gig-info{flex:1}
+
+  .gig-name{
+    font-family:'Rajdhani',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--white);
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  .gig-type{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:2px;
+    margin-top:3px;
+  }
+
+  .gig-arrow{
+    font-size:18px;
+    color:var(--border);
+  }
+
+  /* GEAR */
+  .gear-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+  }
+
+  .gear-card{
+    background:var(--card);
+    padding:28px 24px;
+  }
+
+  .gear-icon{
+    font-size:28px;
+    margin-bottom:14px;
+    display:block;
+  }
+
+  .gear-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;
+    color:var(--gold);
+    letter-spacing:1px;
+  }
+
+  .gear-desc{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:1px;
+    margin-top:6px;
+    line-height:1.7;
+  }
+
+  /* CONTACT */
+  .contact-block{
+    border:1px solid var(--border);
+    background:var(--card);
+    padding:48px;
+  }
+
+  .contact-row{
+    display:flex;
+    align-items:flex-start;
+    gap:20px;
+    padding:20px 0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .contact-row:last-child{border-bottom:none}
+
+  .contact-icon{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--gold);
+    text-transform:uppercase;
+    min-width:90px;
+    padding-top:2px;
+  }
+
+  .contact-val{
+    font-family:'Rajdhani',sans-serif;
+    font-weight:600;
+    font-size:18px;
+    color:var(--white);
+    letter-spacing:1px;
+    word-break:break-all;
+  }
+
+  /* FOOTER */
+  .footer{
+    border-top:1px solid var(--border);
+    padding:32px 24px;
+    text-align:center;
+  }
+
+  .footer-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:32px;
+    color:var(--gold);
+    letter-spacing:3px;
+  }
+
+  .footer-sub{
+    font-family:'Space Mono',monospace;
+    font-size:9px;
+    letter-spacing:4px;
+    color:var(--muted);
+    margin-top:8px;
+    text-transform:uppercase;
+  }
+
+  /* GOLD LINE TOP */
+  .gold-line{
+    height:3px;
+    background:linear-gradient(90deg, var(--red), var(--gold), var(--gold2), var(--gold), var(--red));
+    width:100%;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* QUOTE */
+  .quote{
+    border-left:3px solid var(--gold);
+    padding:20px 28px;
+    margin:40px 0;
+    background:rgba(212,168,67,0.04);
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    font-style:italic;
+    color:var(--muted);
+    line-height:1.8;
+  }
+</style>
+
+<div class="gold-line"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-tag">Electronic Press Kit — Guwahati, Assam, India</p>
+  <h1 class="hero-name">Feeling<span>Gaga</span></h1>
+  <p class="hero-sub">DJ &nbsp;·&nbsp; Turntablist &nbsp;·&nbsp; Open Format</p>
+  <div class="hero-divider"></div>
+  <div class="hero-genres">
+    <span class="genre-pill">Hip Hop</span>
+    <span class="genre-pill">Turntablism</span>
+    <span class="genre-pill">Bollywood</span>
+    <span class="genre-pill">Punjabi</span>
+    <span class="genre-pill">Open Format</span>
+  </div>
+</section>
+
+<!-- BIO -->
+<div class="section-divider" style="margin:0"></div>
+
+<div class="section" id="s1">
+  <p class="section-label">Who is</p>
+  <h2 class="section-title">The Artist</h2>
+  <p class="bio-text">
+    <strong>Feeling Gaga</strong> is a Guwahati-based DJ and turntablist carving a bold presence in North East India's growing music scene. Blending the raw energy of <strong>Hip Hop and Turntablism</strong> with the infectious groove of <strong>Bollywood, Punjabi</strong> and multi-genre open format sets, Feeling Gaga delivers performances that are both technically sharp and emotionally charged.
+    <br><br>
+    From commanding the decks at <strong>Kharkaa Disco</strong> to rocking college crowds at <strong>SVEA</strong> and creating unforgettable moments at private events, Feeling Gaga brings the same dedication and energy to every room — big or small. Rooted in the craft of real DJing with <strong>professional Pioneer turntables and mixer</strong>, every set is a live, hands-on, authentic performance.
+    <br><br>
+    With a growing social media presence at <strong>@feeling.gaga</strong> and a sound that connects across generations, Feeling Gaga is a name to watch in North East India's nightlife and events circuit.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-number">3+</span>
+      <span class="stat-label">Genres Mastered</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">NE</span>
+      <span class="stat-label">India Based</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">Pioneer</span>
+      <span class="stat-label">Pro Setup</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number">Live</span>
+      <span class="stat-label">Turntablism</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- GIGS -->
+<div class="section" id="s2">
+  <p class="section-label">Where I've Played</p>
+  <h2 class="section-title">Past Performances</h2>
+
+  <div class="gig-list">
+    <div class="gig-item">
+      <span class="gig-number">01</span>
+      <span class="gig-dot"></span>
+      <div class="gig-info">
+        <div class="gig-name">Kharkaa Disco</div>
+        <div class="gig-type">Night Club &nbsp;·&nbsp; Guwahati, Assam</div>
+      </div>
+      <span class="gig-arrow">→</span>
+    </div>
+    <div class="gig-item">
+      <span class="gig-number">02</span>
+      <span class="gig-dot"></span>
+      <div class="gig-info">
+        <div class="gig-name">SVEA College</div>
+        <div class="gig-type">College Event &nbsp;·&nbsp; St. Vivekananda English Academy</div>
+      </div>
+      <span class="gig-arrow">→</span>
+    </div>
+    <div class="gig-item">
+      <span class="gig-number">03</span>
+      <span class="gig-dot"></span>
+      <div class="gig-info">
+        <div class="gig-name">Private Weddings</div>
+        <div class="gig-type">Wedding Events &nbsp;·&nbsp; Multiple Occasions</div>
+      </div>
+      <span class="gig-arrow">→</span>
+    </div>
+  </div>
+
+  <div class="quote">
+    "Available for clubs, college fests, corporate events, weddings & private parties across Guwahati and North East India."
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- GEAR -->
+<div class="section" id="s3">
+  <p class="section-label">The Setup</p>
+  <h2 class="section-title">Professional Gear</h2>
+
+  <div class="gear-grid">
+    <div class="gear-card">
+      <span class="gear-icon">🎛️</span>
+      <div class="gear-name">Pioneer Turntables</div>
+      <div class="gear-desc">PROFESSIONAL VINYL<br>TURNTABLE SETUP<br>FOR LIVE SCRATCHING</div>
+    </div>
+    <div class="gear-card">
+      <span class="gear-icon">🎚️</span>
+      <div class="gear-name">Pioneer Mixer</div>
+      <div class="gear-desc">PRO-GRADE MIXER<br>FOR PRECISE FADER<br>CONTROL & FX</div>
+    </div>
+    <div class="gear-card">
+      <span class="gear-icon">🎧</span>
+      <div class="gear-name">Pioneer REV 1</div>
+      <div class="gear-desc">PORTABLE SCRATCH<br>CONTROLLER FOR<br>ON-THE-GO SETS</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- SOCIAL -->
+<div class="section" id="s4">
+  <p class="section-label">Online</p>
+  <h2 class="section-title">Find The Music</h2>
+
+  <div class="gear-grid">
+    <div class="gear-card">
+      <span class="gear-icon">📸</span>
+      <div class="gear-name">Instagram</div>
+      <div class="gear-desc">@FEELING.GAGA<br><br>DJ REELS, LIVE SETS<br>& BEHIND THE SCENES</div>
+    </div>
+    <div class="gear-card">
+      <span class="gear-icon">💬</span>
+      <div class="gear-name">WhatsApp</div>
+      <div class="gear-desc">@FEELING_GAGA<br><br>QUICK BOOKING<br>ENQUIRIES</div>
+    </div>
+    <div class="gear-card">
+      <span class="gear-icon">✉️</span>
+      <div class="gear-name">Email</div>
+      <div class="gear-desc">MAIL@FEELINGAGA.IN<br><br>FORMAL BOOKING<br>& COLLABS</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<div class="section" id="s5">
+  <p class="section-label">Book Now</p>
+  <h2 class="section-title">Booking & Contact</h2>
+
+  <div class="contact-block">
+    <div class="contact-row">
+      <span class="contact-icon">Email</span>
+      <span class="contact-val">mail@feelingaga.in</span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">WhatsApp</span>
+      <span class="contact-val">@feeling_gaga</span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">Instagram</span>
+      <span class="contact-val">@feeling.gaga</span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">Based In</span>
+      <span class="contact-val">Guwahati, Assam — Available across North East India</span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">Events</span>
+      <span class="contact-val">Clubs · College Fests · Weddings · Corporate · Private Parties</span>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-name">Feeling Gaga</div>
+  <div class="footer-sub">DJ &nbsp;·&nbsp; Turntablist &nbsp;·&nbsp; Guwahati, India &nbsp;·&nbsp; @feeling.gaga</div>
+</div>
+<div class="gold-line"></div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+}, {threshold: 0.1});
+
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+</script>
